@@ -1,0 +1,104 @@
+#include <iostream>
+#include <string>
+#include <cstdlib>
+#include <ctime>
+
+// Forward declarations
+class Item;
+class Box;
+
+// Item interface
+class Item {
+public:
+    virtual std::string getName() = 0;
+    virtual int getValue() = 0;
+};
+
+// Concrete item classes
+class KoinSilver : public Item {
+public:
+    std::string getName() override { return "Koin Silver"; }
+    int getValue() override { return 1; }
+};
+
+class KoinEmas : public Item {
+public:
+    std::string getName() override { return "Koin Emas"; }
+    int getValue() override { return 3; }
+};    
+    
+class Berlian : public Item {
+public:
+    std::string getName() override { return "Berlian"; }
+    int getValue() override { return 7; }
+};
+
+class TiketEmas : public Item {
+public:
+    std::string getName() override { return "Tiket Emas"; }
+    int getValue() override { return 10; }
+};
+
+// Item factory
+class ItemFactory {
+public:
+    static Item* createItem() {
+        int random = rand() % 3;
+        switch (random) {
+            case 0: return new KoinSilver();
+            case 1: return new KoinEmas();
+            case 2: return new Berlian();
+            case 3: return new TiketEmas();
+            default: return nullptr;
+        }
+    }
+};
+
+// Box class
+class Box {
+private:
+    Item* item;
+public:
+    Box() : item(ItemFactory::createItem()) {}
+    ~Box() { delete item; }
+    std::string openBox() {
+        return "Kamu Mendapat " + item->getName() + " Bernilai " + std::to_string(item->getValue()) + " Poin!";
+    }
+    void swapBox() {
+        delete item;
+        item = ItemFactory::createItem();
+    }
+};
+
+// Game class
+class Game {
+private:
+    Box box;
+public:
+    void play() {
+        std::cout << "Selamat Datang Di Game Mystery Box!" << std::endl;
+        while (true) {
+            std::cout << "Apa Kamu Mau Membuka Box atau Menukar?" << std::endl;
+            std::cout << "1. Buka Box" << std::endl;
+            std::cout << "2. Tukar Box" << std::endl;
+            int choice;
+            std::cin >> choice;
+            if (choice == 1) {
+                std::cout << box.openBox() << std::endl;
+                break;
+            } else if (choice == 2) {
+                box.swapBox();
+                std::cout << "Kamu Telah Menukar Box!" << std::endl;
+            } else {
+                std::cout << "Pilihan Tidak Valid. Coba Lagi!" << std::endl;
+            }
+        }
+    }
+};
+
+int main() {
+srand(time(0)); // seed random number generator
+Game game;
+game.play();
+return 0;
+}
